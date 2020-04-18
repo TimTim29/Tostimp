@@ -1,0 +1,56 @@
+/**
+ * Definition of Interval:
+ * classs Interval {
+ *     int start, end;
+ *     Interval(int start, int end) {
+ *         this->start = start;
+ *         this->end = end;
+ *     }
+ * }
+ */
+#include<math.h>
+class Solution {
+public:
+    /**
+     * @param intervals: an array of meeting time intervals
+     * @return: the minimum number of conference rooms required
+     */
+    struct compare{
+        bool operator()(const Interval I1,const Interval I2){
+        return I1.start < I2.start;
+        }
+    }; 
+    struct compareme{
+        bool operator()(const Interval I1,const Interval I2){
+        return I1.end > I2.end;
+        }
+    };
+    int minMeetingRooms(vector<Interval> &intervals) 
+    {
+
+
+      if(intervals.size()==0)
+      return 0;
+      sort(intervals.begin(),intervals.end(),compare());
+      int rooms=0;
+      priority_queue<Interval,vector<Interval>,compareme> pq_min;
+      for(int i=0;i<intervals.size();i++){
+          if(pq_min.size()==0)
+          pq_min.push(intervals[i]);
+          else if(intervals[i].start < pq_min.top().end)
+          pq_min.push(intervals[i]);
+          else{
+              if(pq_min.size() > rooms)
+              rooms=pq_min.size();
+              //cout<<pq_min.top().start<<"**"<<"\n";
+              while(!pq_min.empty() && intervals[i].start >= pq_min.top().end){
+                  pq_min.pop();
+              }
+              pq_min.push(intervals[i]);
+          }
+      }
+      if(pq_min.size() > rooms)
+         rooms=pq_min.size();
+      return rooms;     
+    }
+};
