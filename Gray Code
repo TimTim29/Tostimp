@@ -1,0 +1,51 @@
+class Solution {
+public:
+    int total;
+    int flag=0;
+    vector<int> result;
+    unordered_set<int> uset;
+    void allpossiblecombi(vector<int> tra,int curr,int iter,int n){
+        if(flag==1)
+            return;
+        if(iter+1==total){
+            if(tra.size()==total){
+                result=tra;
+                flag=1;
+                return;
+            }
+            else
+                return;
+        }   
+        int one=1;
+        for(int i=0;i<n;i++){
+            int changed;
+            one=1<<i;
+            if(one & curr){
+                changed= ~one & curr;  // unset a BIT
+            }
+            else{
+                changed=curr | one;  // set a BIT
+            }
+            if(uset.find(changed)==uset.end()){
+                uset.insert(changed);
+                tra.push_back(changed);
+                allpossiblecombi(tra,changed,iter+1,n);
+                tra.pop_back();
+                uset.erase(changed);
+            }
+        }
+        uset.erase(curr);
+        tra.pop_back();
+        return;
+    }
+    vector<int> grayCode(int n) {
+        vector<int> tra;
+        tra.push_back(0);
+        if(n==0)
+            return tra;
+        uset.insert(0);
+        total=pow(2,n);
+        allpossiblecombi(tra,0,0,n);
+        return result;
+    }
+};
